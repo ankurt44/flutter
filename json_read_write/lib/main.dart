@@ -15,16 +15,16 @@ class MyJsonApp extends StatelessWidget {
 
 class _AddItemsState extends State<_AddItems>
 {
-  final _items = <String>[];
+  final _items = <MyItem>[];
   final _biggerFont = const TextStyle(fontSize: 18.0);
 
   final _textFieldController = TextEditingController();
 
   Widget _buildItemsList() {
     final Iterable<ListTile> tiles = _items.map(
-      (String item){
+      (MyItem item){
         return ListTile(
-          title: Text(item, style: _biggerFont,),
+          title: Text(item.toString(), style: _biggerFont,),
         );
       },
     );
@@ -52,7 +52,8 @@ class _AddItemsState extends State<_AddItems>
                     setState(() {
                       String item = _textFieldController.text;
                       if(item.isNotEmpty){
-                        _items.add(item);
+                        MyItem myItem = MyItem.parseCommaSeparatedString(item);
+                        _items.add(myItem);
                         _textFieldController.clear();
                       }
                     });
@@ -71,4 +72,27 @@ class _AddItemsState extends State<_AddItems>
 class _AddItems extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => _AddItemsState();
+}
+
+class MyItem
+{
+  final String name;
+  final double quantity;
+
+  MyItem(this.name, this.quantity);
+
+  String toString() => name + ":" + quantity.toString();
+
+  static MyItem parseCommaSeparatedString(String item)
+  {
+    List<String> myItem = item.split(",");
+    String name = myItem[0];
+    double quantity = 0.0;
+    if(myItem.length > 1)
+    {
+      // ToDo : handle exception when myItem[1] is cannot be parsed as double.
+      quantity = double.parse(myItem[1]);
+    }
+    return MyItem(name, quantity);
+  }
 }
