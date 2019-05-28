@@ -25,6 +25,14 @@ class _AddItemsState extends State<_AddItems>
       (MyItem item){
         return ListTile(
           title: Text(item.toString(), style: _biggerFont,),
+          trailing: IconButton(
+            icon: Icon(Icons.delete),
+            onPressed: (){
+              setState(() {
+               _items.remove(item); 
+              });
+            },
+          ),
         );
       },
     );
