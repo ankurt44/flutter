@@ -39,7 +39,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Widget _buildBody(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
-      stream: Firestore.instance.collection('baby').snapshots(),
+      stream: Firestore.instance.collection('baby').where('votes', isGreaterThan: 3).snapshots(),
       builder: (context, snapshot){
         if(!snapshot.hasData) return LinearProgressIndicator();
         return _buildList(context, snapshot.data.documents);
@@ -68,7 +68,14 @@ class _MyHomePageState extends State<MyHomePage> {
         child: ListTile(
           title: Text(record.name),
           trailing: Text(record.votes.toString()),
-          onTap: () => print(record),
+          // The line below can result into a race condition when two or more users updated 'votes' shared resource at the same time.
+          // onTap: () => record.reference.updateData({'votes': record.votes + 1}),
+          // To prevent race condition, use transaction
+          onTap: () => Firestore.instance.runTransaction((transaction) async{
+            final freshSnapshot = await transaction.get(record.reference);
+            final fresh = Record.fromSnapshot(freshSnapshot);
+            await transaction.update(record.reference, {'votes': fresh.votes+1});
+          }),
         ),
       ),
     );
