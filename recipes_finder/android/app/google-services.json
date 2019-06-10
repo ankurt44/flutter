@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "342885178808",
+    "firebase_url": "https://recipes-database-41d7b.firebaseio.com",
+    "project_id": "recipes-database-41d7b",
+    "storage_bucket": "recipes-database-41d7b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:342885178808:android:51b195fb94e0d411",
+        "android_client_info": {
+          "package_name": "com.dev.flutter.recipes_finder"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "342885178808-5t2g7st71morkqjlqig2tiqheelgoaro.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD9IoAIa_gPiW-oLc6ncsWHFpsZuFOYo8w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "342885178808-5t2g7st71morkqjlqig2tiqheelgoaro.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

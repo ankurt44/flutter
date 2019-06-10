@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 void main() => runApp(MyApp());
 
@@ -95,66 +96,72 @@ class _AddItemsWidgetState extends State<_AddItemsWidget>
   }
 
   void _showRecipes() {
-    var recipes = _downloadRecipes();
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (BuildContext context){
-          return RecipesWidget(recipes);
+          return Scaffold(
+            appBar: AppBar(title: Text('Recipes'),),
+            body: _downloadRecipes(),
+          );
         }
       )
     );
   }
 
-  Iterable<_Recipe> _downloadRecipes() {
-    final Set<_Recipe> _saved = {};
-    return _saved;
-  }
-}
-
-class RecipesWidget extends StatelessWidget {
-
-  Set<_Recipe> _recipes;
-
-  RecipesWidget( recipes) {
-    _recipes = recipes;
+  Widget _downloadRecipes() {
+    return StreamBuilder<QuerySnapshot>(
+      stream: Firestore.instance.collection('recipes').snapshots(),
+      builder: (context, snapshot){
+        if(!snapshot.hasData) return LinearProgressIndicator();
+        return _buildRecipesListView(context, snapshot.data.documents);
+      },
+    );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final Iterable<ListTile> tiles = _recipes.map(
-        (_Recipe a){
-          return ListTile(
-            title: Text(
-              a.name, 
-            ),
-          );
-        },
-      );
-    final List<Widget> divided = ListTile.divideTiles(
-      context: context,
-      tiles: tiles
-    )
-    .toList();
+  Widget _buildRecipesListView(BuildContext context, List<DocumentSnapshot> documents) {
+    return ListView(
+      padding: EdgeInsets.only(top: 20.0),
+      children: documents.map((data) => _buildRecipeListItem(context, data)).toList(),
+    );
+  }
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Recipes'),
+  Widget _buildRecipeListItem(BuildContext context, DocumentSnapshot data) {
+    final _recipe = _Recipe.fromSnapshot(data);
+
+    return Padding(
+      key: ValueKey(_recipe.name),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.grey),
+          borderRadius: BorderRadius.circular(5.0),
+        ),
+        child: ListTile(
+          title: Text(_recipe.name),
+          trailing: Text(_recipe.rating.toString() + '/5'),
+        ),
       ),
-      body: ListView(children: divided,)
     );
   }
 }
 
 class _Recipe {
-  String _name;
-  String _description;
-  int _rating;
+  final String _name;
+  final String _description;
+  final int _rating;
+  final DocumentReference ref;
 
-  _Recipe(String name, String description, int rating) {
-    _name = name;
-    _description = description;
-    _rating = rating;
-  }
+  _Recipe.fromMap(Map<String, dynamic> map, {this.ref}) 
+    : assert(map['name'] != null),
+    assert(map['description'] != null),
+    assert(map['rating'] != null),
+    assert(map['ingredients'] != null),
+    _name = map['name'],
+    _description = map['description'],
+    _rating = map['rating'];
+
+  _Recipe.fromSnapshot(DocumentSnapshot document)
+    : this.fromMap(document.data, ref: document.reference);
 
   String get name => _name;
   String get description => _description;
