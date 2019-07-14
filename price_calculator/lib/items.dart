@@ -4,9 +4,9 @@ class Items{
   {
     return [
       Item('A1', 'A1', 1000.0, RawMaterials.getRawMaterials(['R1'])),
-      Item('B1', 'B1', 1000.0, RawMaterials.getRawMaterials(['R2', 'R4'])),
-      Item('C1', 'C1', 1000.0, RawMaterials.getRawMaterials(['R3'])),
-      Item('D1', 'D1', 1000.0, RawMaterials.getRawMaterials(['R3', 'R1'])),
+      Item('B1', 'B1', 2000.0, RawMaterials.getRawMaterials(['R2', 'R4'])),
+      Item('C1', 'C1', 3000.0, RawMaterials.getRawMaterials(['R3'])),
+      Item('D1', 'D1', 4000.0, RawMaterials.getRawMaterials(['R3', 'R1'])),
     ];
   }
 }
@@ -19,7 +19,7 @@ class Item{
 
   Item(this._id, this._name, this._price, this._rawMaterials);
 
-  String get Name => _name;
+  String get name => _name;
   double get price => _price;
   String get id => _id;
   List<RawMaterial> get rawMaterials => _rawMaterials;
