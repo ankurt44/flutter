@@ -53,6 +53,7 @@ class DiscountSelector extends StatelessWidget {
             style: Theme.of(context).textTheme.display1,
           ),
           onTap: () => _showDialog(context, item),
+          trailing: Text(_counts[item.name].toString()),
         ),
       ),
     );
